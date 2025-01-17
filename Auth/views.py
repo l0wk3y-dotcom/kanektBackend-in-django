@@ -6,7 +6,8 @@ from rest_framework.views import APIView
 from .models import *
 from rest_framework.parsers import MultiPartParser, FormParser
 from .serializers import ProfileSerializer
-# Create your views here.
+
+
 class RetrieveUpdateCreateProfileAPI(APIView):
     parser_classes = [MultiPartParser, FormParser]
     def get(self, request, pk = None, *args, **kwargs):
@@ -46,6 +47,8 @@ class SearchUser(APIView):
         sz = ProfileSerializer(profile, many = True)
         return Response(sz.data)
 
+
+
 class FollowUserAPI(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request, username, *args, **kwargs):
@@ -59,8 +62,6 @@ class FollowUserAPI(APIView):
             return Response({"status": "Following"}, status=200)
         else:
             return Response({"status": "Follow"}, status=200)
-
-        
 
     def post(self, request, username, *args, **kwargs):
         user = get_object_or_404(User, username=username)
@@ -81,3 +82,16 @@ class FollowUserAPI(APIView):
             follow_obj.following.add(user)
             follow_obj.follower.add(request.user)
             return Response({"message": f"Followed {username}"})
+
+
+
+class RegisterFCMToken(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('fcmToken')
+        if token:
+            profile  = get_object_or_404(Profile, user = request.user)
+            profile.fcm_token = token
+            profile.save()
+            return Response(f"success changed the token for {request.user.username}", status=status.HTTP_200_OK)
+        return Response("Token could not be created", status=status.HTTP_400_BAD_REQUEST)

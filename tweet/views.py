@@ -49,7 +49,7 @@ class TweetReplies(APIView):
         replytweetsz = TweetSerializer(data = request.data)
         if replytweetsz.is_valid():
             replytweet = replytweetsz.save(user = request.user)
-            replytweet.replied_to = request.user.username
+            replytweet.replied_to = tweetobj.user.username
             replytweet.save()
         else:
             return Response({"message" : "Error occured!!"})

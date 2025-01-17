@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
+import firebase_admin
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,12 +29,16 @@ SECRET_KEY = 'django-insecure-4^rk^)!0oan+ff$e8gdi=58eb=8-$dzjkaec0118pg!72g)(6n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.2.2','127.0.0.1', '.vercel.app']
+ALLOWED_HOSTS = ['10.0.2.2','127.0.0.1','192.168.1.2','192.168.1.4']
 
-
+service_key_path = os.path.join(BASE_DIR, "kanekt-89e07-firebase-adminsdk-fy4ac-11e5a32539.json")
+cred = firebase_admin.credentials.Certificate(service_key_path)
+firebase_admin.initialize_app(credential=cred)
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
+    'firebase_admin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,7 +61,6 @@ CREATED_APPS = [
 ]
 
 INSTALLED_APPS += THIRD_PARTY_APPS + CREATED_APPS
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -70,8 +76,8 @@ REST_FRAMEWORK = {
     )
     
 }
-from datetime import timedelta
-...
+
+
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
@@ -131,19 +137,29 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend.wsgi.application'
+ASGI_APPLICATION = 'backend.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
+}
+
+import dj_database_url
 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / "db.sqlite3",  # Local database file
     }
 }
-
+# DATABASES["default"] = dj_database_url.parse("postgresql://postgres:XqSpoqKfSpUwZZhmhdcxTAWbiwjxMBFK@junction.proxy.rlwy.net:23579/railway")
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -163,7 +179,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+somethingweird = "postgresql://postgres:XqSpoqKfSpUwZZhmhdcxTAWbiwjxMBFK@junction.proxy.rlwy.net:23579/railway"
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 

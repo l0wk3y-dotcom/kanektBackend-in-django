@@ -19,12 +19,13 @@ class TweetSerializer(serializers.ModelSerializer):
     isliked = serializers.SerializerMethodField()
     isretweeted = serializers.SerializerMethodField()
     replies = serializers.SerializerMethodField()
-    
+    user_picture = serializers.SerializerMethodField()
 
     class Meta:
         model = tweet
-        fields = ['id', 'body', 'user' ,'name','created_at', 'images', 'images_data',"likes","retweets","views","shares","isliked", "isretweeted", "retweeted_by", "replied_to" , "replies"]
+        fields = ['id', 'body', 'user' ,'name','created_at', 'images', 'images_data',"likes","retweets","views","shares","isliked", "isretweeted", "retweeted_by", "replied_to" , "replies", "user_picture"]
         read_only = ["likes","retweets","views","shares"]
+        ordering = ['-created_at']
 
     def create(self, validated_data):
         images_list = validated_data.pop('images', [])
@@ -58,7 +59,8 @@ class TweetSerializer(serializers.ModelSerializer):
         if request and request.user.is_authenticated:
             return Retweet.objects.filter(user=request.user, tweet=obj).exists()
         return False
-    
+    def get_user_picture(self, obj):
+        return obj.user.profile.picture.url
 
 class HashtagSerializer(serializers.ModelSerializer):
     tweet_count = serializers.SerializerMethodField()
