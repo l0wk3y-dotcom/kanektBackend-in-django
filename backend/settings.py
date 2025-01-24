@@ -29,7 +29,7 @@ SECRET_KEY = 'django-insecure-4^rk^)!0oan+ff$e8gdi=58eb=8-$dzjkaec0118pg!72g)(6n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.2.2','127.0.0.1','192.168.1.2','192.168.1.4']
+ALLOWED_HOSTS = ['10.0.2.2','127.0.0.1','192.168.1.2','192.168.1.4','192.168.1.3']
 
 service_key_path = os.path.join(BASE_DIR, "kanekt-89e07-firebase-adminsdk-fy4ac-11e5a32539.json")
 cred = firebase_admin.credentials.Certificate(service_key_path)
@@ -147,8 +147,6 @@ CHANNEL_LAYERS = {
         },
     },
 }
-
-import dj_database_url
 
 import dj_database_url
 # Database
